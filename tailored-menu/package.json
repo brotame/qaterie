@@ -4,8 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "parcel src/tm.js",
-    "build": "parcel build src/tm.js"
+    "dev": "parcel src/app.js",
+    "build": "parcel build src/app.js"
   },
   "keywords": [],
   "author": "",
