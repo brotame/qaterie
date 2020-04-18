@@ -2,10 +2,10 @@
   "name": "tailored-menu",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "src/app.js",
   "scripts": {
     "dev": "parcel src/app.js",
-    "build": "parcel build src/app.js"
+    "build": "parcel build src/app.js --no-source-maps"
   },
   "keywords": [],
   "author": "",
