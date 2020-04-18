@@ -142,7 +142,7 @@ let tmController = {
 
     let setEventListeners = () => {
       msf.next.addEventListener("click", nextClick);
-      msf.add.addEventListener("click", backClick);
+      msf.add.addEventListener("click", addPastry);
       if (msf.formNav) {
         msf.formNav.forEach((nav) => {
           nav.addEventListener("click", navClick);
@@ -170,7 +170,9 @@ let tmController = {
       }
     };
 
-    let backClick = () => {
+    let addPastry = () => {};
+
+    /*let backClick = () => {
       let previousStep = msf.currentStep - 1;
 
       if (previousStep >= 0) {
@@ -179,7 +181,7 @@ let tmController = {
         msf.setMaskHeight();
         msf.setNextButtonText();
       }
-    };
+    };*/
 
     let navClick = (e) => {
       let step = e.currentTarget.dataset.msfNav - 1;
