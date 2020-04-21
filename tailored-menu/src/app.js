@@ -1,6 +1,7 @@
 /**
  * Multi Step Form functionality for Qaterie
  */
+// @ts-check
 
 class MSF {
   constructor(data) {
@@ -62,23 +63,9 @@ class MSF {
     this.submitButton.click();
   }
 
-  submitHiddenForm(index) {
-    let inputs = this.getInputs(index);
-
-    inputs.forEach((el) => {
-      let hiddenInput = document.getElementById(`hidden-${el.id}`);
-
-      if (hiddenInput) {
-        hiddenInput.value = el.value;
-      }
-    });
-
-    this.hiddenSubmitButton.click();
-  }
-
   hideButtons() {
     this.next.style.display = "none";
-    this.back.style.display = "none";
+    this.add.style.display = "none";
   }
 
   addWarningClass(target) {
@@ -196,7 +183,6 @@ let tmController = {
       );
       let requiredRadios = requiredInputs.filter((el) => el.type === "radio");
       let filledInputs = 0;
-      let pass;
 
       requiredInputs.forEach((el) => {
         if (el.value && el.type !== "email") {
@@ -245,11 +231,12 @@ let tmController = {
         }
       });
 
-      filledInputs ===
-      requiredInputs.length + requiredCheckboxes.length + requiredRadios.length
-        ? (pass = true)
-        : (pass = false);
-      return pass;
+      return filledInputs ===
+        requiredInputs.length +
+          requiredCheckboxes.length +
+          requiredRadios.length
+        ? true
+        : false;
     };
 
     let validateEmail = (email) => {
