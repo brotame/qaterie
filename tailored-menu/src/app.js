@@ -1,7 +1,6 @@
 /**
  * Multi Step Form functionality for Qaterie
  */
-// @ts-check
 
 class MSF {
   constructor(data) {
@@ -119,7 +118,7 @@ class Pastry {
   }
 }
 
-let tmController = {
+let msfController = {
   init: (msf) => {
     let start = () => {
       console.log(msf);
