@@ -4,8 +4,8 @@
   "description": "",
   "main": "src/app.js",
   "scripts": {
-    "dev": "parcel src/app.js",
-    "build": "parcel build src/app.js --no-source-maps --no-cache"
+    "dev": "parcel src/index.js",
+    "build": "parcel build src/index.js --no-source-maps --no-cache"
   },
   "keywords": [],
   "author": "",
