@@ -149,7 +149,7 @@ const pastriesController = {
       const [inputName, pastryID] = e.target.id.split("-");
       const pastry = pastries.find((el) => el.id === parseInt(pastryID));
       if (value) {
-        pastry.pushValue(inputName, value);
+        pastry[inputName] = value;
         pastry.enableOptions(inputName);
         pastry.getOptions(inputName, value);
       } else {

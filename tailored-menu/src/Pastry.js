@@ -141,11 +141,6 @@ export default class Pastry {
     }
   }
 
-  pushValue(optionName, selectedValue) {
-    this[optionName] = selectedValue;
-    console.log(this);
-  }
-
   expand() {
     if (!this.collapsed) return;
 
