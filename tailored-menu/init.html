@@ -3,15 +3,14 @@
 <script>
   var Webflow = Webflow || [];
   Webflow.push(function () {
-    let tmData = new MSF({
-      formID: "tailored-menu",
-      nextID: "tm-next",
-      addID: "tm-add",
-      nextText: "Next",
-      submitText: "Submit",
-      alertText: "Please, fill all the required fields.",
-      warningClass: "warning",
-    });
-    tmController.init(tmData);
+    msfController.init(tmData);
   });
 </script>
+
+<style>
+  .w-input[disabled],
+  .w-select[disabled] {
+    background-color: transparent;
+    opacity: 0.5;
+  }
+</style>

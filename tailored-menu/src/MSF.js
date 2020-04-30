@@ -1,20 +1,19 @@
-export default class MSF {
+export default class MultiStepForm {
   constructor(data) {
     this.currentStep = 0;
-    this.form = document.getElementById(data.formID);
-    this.next = document.getElementById(data.nextID);
-    this.add = document.getElementById(data.addID);
+    this.form = data.form;
+    this.next = data.next;
     this.submitButton = this.form.querySelector('input[type="submit"]');
     this.mask = this.form.querySelector(".w-slider-mask");
     this.steps = this.form.querySelectorAll(".w-slide");
     this.rightArrow = this.form.querySelector(".w-slider-arrow-right");
     this.leftArrow = this.form.querySelector(".w-slider-arrow-left");
-    this.sliderNav = this.form.querySelectorAll(".w-slider-dot");
+    this.sliderNav = this.form.querySelector(".w-slider-nav").childNodes;
     this.formNav = document.querySelectorAll("[data-msf-nav]");
     this.nextText = data.nextText;
     this.submitText = data.submitText;
     this.warningClass = data.warningClass;
-    this.alertElementID = document.getElementById(data.alertElementID);
+    this.alertElement = data.alert;
   }
 
   getInputs(index) {

@@ -1,32 +1,22 @@
 /**
- * Multi Step Form functionality for Qaterie
+ * Qaterie Tailored Menu
  */
 
-import MSF from "./MSF";
-import Pastry from "./Pastry";
+import { elements, msf } from "./base";
+import Pastry from "./pastry";
 
-let tmData = new MSF({
-  formID: "tailored-menu",
-  nextID: "tm-next",
-  addID: "tm-add",
-  nextText: "Next",
-  submitText: "Submit",
-  alertText: "Please, fill all the required fields.",
-  warningClass: "warning",
-});
-msfController.init(tmData);
-
-let msfController = {
-  init: (msf) => {
+/**
+ * Multi Step Form Controller
+ */
+const msfController = {
+  init: () => {
     const start = () => {
-      console.log(msf);
       setEventListeners();
       msf.setMaskHeight();
     };
 
-    let setEventListeners = () => {
+    const setEventListeners = () => {
       msf.next.addEventListener("click", nextClick);
-      msf.add.addEventListener("click", addPastry);
       if (msf.formNav) {
         msf.formNav.forEach((nav) => {
           nav.addEventListener("click", navClick);
@@ -54,8 +44,6 @@ let msfController = {
         msf.showAlert();
       }
     };
-
-    let addPastry = () => {};
 
     let navClick = (e) => {
       const step = e.currentTarget.dataset.msfNav - 1;
@@ -136,3 +124,79 @@ let msfController = {
     start();
   },
 };
+
+/**
+ * Pastries Controller
+ */
+const pastriesController = {
+  init: () => {
+    const pastries = [];
+    let currentID = 1;
+
+    const start = () => {
+      addPastry();
+      setEventListeners();
+    };
+
+    const setEventListeners = () => {
+      elements.pastriesContainer.addEventListener("change", pastryInput);
+      elements.pastriesContainer.addEventListener("click", pastryClick);
+      elements.add.addEventListener("click", addPastry);
+    };
+
+    const pastryInput = (e) => {
+      const value = e.target.value;
+      const [inputName, pastryID] = e.target.id.split("-");
+      const pastry = pastries.find((el) => el.id === parseInt(pastryID));
+      if (value) {
+        pastry.pushValue(inputName, value);
+        pastry.enableOptions(inputName);
+        pastry.getOptions(inputName, value);
+      } else {
+        pastry.disableOptions(inputName);
+      }
+    };
+
+    const pastryClick = (e) => {
+      const pastryBlock = e.target.closest(".tm-pastry");
+      let pastryID;
+
+      // Get the ID of the pastry
+      if (pastryBlock) pastryID = parseInt(pastryBlock.id.split("-")[1]);
+
+      // Trigger corresponding methods
+      if (e.target.classList.contains("tm-heading")) togglePastry(pastryID);
+      if (
+        e.target.classList.contains("tm-delete") ||
+        e.target.parentNode.classList.contains("tm-delete")
+      )
+        deletePastry(pastryID);
+    };
+
+    const addPastry = () => {
+      const newPastry = new Pastry(currentID);
+
+      pastries.forEach((pastry) => pastry.collapse());
+      newPastry.renderOptions();
+      pastries.push(newPastry);
+      currentID++;
+    };
+
+    const deletePastry = (targetID) => {
+      console.log("Borrar Pastry");
+    };
+
+    const togglePastry = (targetID) => {
+      pastries.forEach((pastry) => {
+        pastry.id === targetID ? pastry.expand() : pastry.collapse();
+      });
+    };
+
+    start();
+  },
+};
+
+Webflow.push(function () {
+  msfController.init();
+  pastriesController.init();
+});
