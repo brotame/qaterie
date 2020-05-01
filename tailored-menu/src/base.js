@@ -11,9 +11,25 @@ export const elements = {
   warningClass: "warning",
 };
 
-export const optionsList = {
-  category: [],
-  flavor: [],
+export const pastryOptions = [];
+
+export const getPastryOptions = () => {
+  const optionsCollection = document.querySelectorAll(".tm-options");
+
+  optionsCollection.forEach((option) => {
+    const data = {
+      category: option.querySelector(".tm-options_category").textContent,
+      flavors: option
+        .querySelector(".tm-options_flavors")
+        .textContent.split(", "),
+      sizes: option.querySelector(".tm-options_sizes").textContent.split(", "),
+      label: option.querySelector(".tm-options_label").textContent,
+    };
+
+    pastryOptions.push(data);
+  });
+
+  console.log(pastryOptions);
 };
 
 export const msf = new MultiStepForm(elements);

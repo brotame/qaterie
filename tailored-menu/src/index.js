@@ -2,7 +2,7 @@
  * Qaterie Tailored Menu
  */
 
-import { elements, msf } from "./base";
+import { elements, getPastryOptions, msf } from "./base";
 import Pastry from "./pastry";
 
 /**
@@ -134,27 +134,15 @@ const pastriesController = {
     let currentID = 1;
 
     const start = () => {
+      getPastryOptions();
       addPastry();
       setEventListeners();
     };
 
     const setEventListeners = () => {
-      elements.pastriesContainer.addEventListener("change", pastryInput);
       elements.pastriesContainer.addEventListener("click", pastryClick);
+      elements.pastriesContainer.addEventListener("change", pastryInput);
       elements.add.addEventListener("click", addPastry);
-    };
-
-    const pastryInput = (e) => {
-      const value = e.target.value;
-      const [inputName, pastryID] = e.target.id.split("-");
-      const pastry = pastries.find((el) => el.id === parseInt(pastryID));
-      if (value) {
-        pastry[inputName] = value;
-        pastry.enableOptions(inputName);
-        pastry.getOptions(inputName, value);
-      } else {
-        pastry.disableOptions(inputName);
-      }
     };
 
     const pastryClick = (e) => {
@@ -173,17 +161,69 @@ const pastriesController = {
         deletePastry(pastryID);
     };
 
+    const pastryInput = (e) => {
+      let value = e.target.value;
+
+      // Get input name and pastry ID and find the object in the store array
+      const [inputName, pastryID] = e.target.id.split("-");
+      const pastry = pastries.find((el) => el.id === parseInt(pastryID));
+
+      // Modify value when conditions are met
+      if (inputName === "quantity" && value < 1) value = e.target.value = 1;
+      if (inputName === "file" && value) value = e.target.files[0].name;
+
+      // Trigger corresponding methods
+      if (value) {
+        pastry.values[inputName] = value;
+        pastry.enableInputs(inputName);
+        pastry.getOptions(inputName);
+      } else {
+        pastry.disableInputs(inputName);
+      }
+
+      console.log(pastry);
+    };
+
     const addPastry = () => {
+      // Create pastry
       const newPastry = new Pastry(currentID);
 
+      // Collapse all pastries
       pastries.forEach((pastry) => pastry.collapse());
-      newPastry.renderOptions();
+
+      // Render new pastry
+      newPastry.renderInputs();
+
+      // Set transition listener (height) to adapt the mask height
+      newPastry.inputsWrap.addEventListener("transitionend", () => {
+        msf.setMaskHeight();
+      });
+
+      // Push pastry to the store array
       pastries.push(newPastry);
+
+      // Increase ID counter
       currentID++;
     };
 
     const deletePastry = (targetID) => {
-      console.log("Borrar Pastry");
+      if (pastries.length <= 1) return;
+
+      const target = pastries.find((pastry) => pastry.id === targetID);
+      const targetIndex = pastries.indexOf(target);
+      const previousPastry = pastries[targetIndex - 1];
+
+      target.pastryBlock.addEventListener("transitionend", (e) => {
+        console.log(e);
+        target.delete();
+        msf.setMaskHeight();
+      });
+      target.hide();
+      //target.delete();
+      //previousPastry.expand();
+
+      pastries.splice(targetIndex, 1);
+      console.log(pastries);
     };
 
     const togglePastry = (targetID) => {
