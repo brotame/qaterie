@@ -29,12 +29,10 @@ export default class MultiStepForm {
   }
 
   setNextButtonText() {
-    if (this.currentStep === this.steps.length - 1) {
+    if (this.currentStep === this.steps.length - 1)
       this.next.textContent = this.submitText;
-    }
-    if (this.currentStep === this.steps.length - 2) {
+    if (this.currentStep === this.steps.length - 2)
       this.next.textContent = this.nextText;
-    }
   }
 
   goNext() {
@@ -72,23 +70,16 @@ export default class MultiStepForm {
   }
 
   showAlert() {
-    if (this.alertText) {
-      alert(this.alertText);
-    }
-
-    if (this.alertElement) {
-      this.alertElement.classList.remove("hidden");
-    }
+    if (this.alertText) alert(this.alertText);
+    if (this.alertElement) this.alertElement.classList.remove("hidden");
   }
 
   hideAlert() {
-    if (this.alertElement) {
-      this.alertElement.classList.add("hidden");
-    }
+    if (this.alertElement) this.alertElement.classList.add("hidden");
   }
 
   setConfirmValues(index) {
-    const inputs = this.getInputs(index);
+    const inputs = this.getInputs(this.currentStep);
 
     inputs.forEach((input) => {
       let value, confirmElement;
@@ -108,11 +99,9 @@ export default class MultiStepForm {
         confirmElement = document.getElementById(`${input.id}-value`);
       }
 
-      if (value && confirmElement) {
-        confirmElement.textContent = value;
-      } else if (!value && confirmElement) {
-        confirmElement.textContent = "-";
-      }
+      if (!confirmElement) return;
+
+      confirmElement.textContent = value ? value : "-";
     });
   }
 }

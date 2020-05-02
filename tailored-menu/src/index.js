@@ -27,22 +27,24 @@ const msfController = {
     const nextClick = () => {
       const filledFields = checkRequiredInputs(msf.currentStep);
 
-      if (filledFields) {
-        msf.setConfirmValues(msf.currentStep);
-        msf.currentStep++;
-        if (msf.currentStep === msf.steps.length) {
-          msf.submitForm();
-          msf.hideButtons();
-          msf.hideAlert();
-        } else {
-          msf.goNext();
-          msf.setMaskHeight();
-          msf.setNextButtonText();
-          msf.hideAlert();
-        }
-      } else {
+      if (!filledFields) {
         msf.showAlert();
+        return;
       }
+
+      msf.setConfirmValues();
+      msf.currentStep++;
+
+      if (msf.currentStep === msf.steps.length) {
+        msf.submitForm();
+        msf.hideButtons();
+      } else {
+        msf.goNext();
+        msf.setMaskHeight();
+        msf.setNextButtonText();
+      }
+
+      msf.hideAlert();
     };
 
     let navClick = (e) => {
@@ -62,35 +64,37 @@ const msfController = {
       let filledInputs = 0;
 
       requiredInputs.forEach((input) => {
-        if (input.value && input.type !== "email") {
+        if (!input.value) {
+          msf.addWarningClass(input);
+          return;
+        }
+
+        if (input.type === "email") {
+          const correctEmail = validateEmail(input.value);
+          if (!correctEmail) {
+            msf.addWarningClass(input);
+            return;
+          }
+
           msf.removeWarningClass(input);
           filledInputs++;
-        } else if (input.value && input.type === "email") {
-          const correctEmail = validateEmail(input.value);
-          if (correctEmail) {
-            msf.removeWarningClass(input);
-            filledInputs++;
-          } else {
-            msf.addWarningClass(input);
-          }
-        } else {
-          msf.addWarningClass(input);
+          return;
         }
+
+        msf.removeWarningClass(input);
+        filledInputs++;
       });
 
       requiredCheckboxes.forEach((input) => {
         const checkbox = input.parentNode.querySelector(".w-checkbox-input");
 
-        if (input.checked) {
-          if (checkbox) {
-            msf.removeWarningClass(checkbox);
-          }
-          filledInputs++;
-        } else {
-          if (checkbox) {
-            msf.addWarningClass(checkbox);
-          }
+        if (!input.checked) {
+          if (checkbox) msf.addWarningClass(checkbox);
+          return;
         }
+
+        if (checkbox) msf.removeWarningClass(checkbox);
+        filledInputs++;
       });
 
       requiredRadios.forEach((input) => {
@@ -211,17 +215,31 @@ const pastriesController = {
 
       const target = pastries.find((pastry) => pastry.id === targetID);
       const targetIndex = pastries.indexOf(target);
-      const previousPastry = pastries[targetIndex - 1];
+      const previousPastry = pastries[targetIndex - 1]
+        ? pastries[targetIndex - 1]
+        : pastries[pastries.length - 1];
 
+      // Listen for target.hide() transition. When it ends, delete the element and toggle the previous pastry.
       target.pastryBlock.addEventListener("transitionend", (e) => {
-        console.log(e);
         target.delete();
-        msf.setMaskHeight();
-      });
-      target.hide();
-      //target.delete();
-      //previousPastry.expand();
 
+        // Update the pastry number in the title
+        pastries.forEach((pastry, index) => {
+          pastry.updatePastryNumber(index + 1);
+        });
+
+        // Expand previous pastry if the target was expanded.
+        if (target.collapsed) {
+          msf.setMaskHeight();
+        } else {
+          togglePastry(previousPastry.id);
+        }
+      });
+
+      // Set opacity to the target.
+      target.hide();
+
+      // Delete the pastry from the array
       pastries.splice(targetIndex, 1);
       console.log(pastries);
     };
