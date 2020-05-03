@@ -1,8 +1,9 @@
 import { elements, pastryOptions } from "./base";
 
 export default class Pastry {
-  constructor(id) {
+  constructor(id, index) {
     this.id = id;
+    this.index = index;
     this.collapsed = false;
     this.inputs = {};
     this.values = {};
@@ -10,7 +11,7 @@ export default class Pastry {
 
   renderInputs() {
     const template = `
-    <div id="pastry-${this.id}" class="tm-pastry" style="opacity: 0;"><div class="tm-pastry_head"><h2 class="tm-heading pastries">Tailor Pastry #<span class="tm-pastry_number">${this.id}</span></h2><div class="tm-delete w-embed"><svg viewBox="0 0 48 48" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M1.70697 47.707L24 25.414L46.293 47.707L47.707 46.293L25.414 24L47.707 1.70697L46.293 0.292969L24 22.586L1.70697 0.292969L0.292969 1.70697L22.586 24L0.292969 46.293L1.70697 47.707Z"></path></svg></div></div><div class="tm-pastry_inputs_wrap" style="height: 426px;"><div class="tm-pastry_inputs"><select id="category-${this.id}" name="Category-${this.id}" data-name="Category-${this.id}" required="" class="tm-select w-select"><option value="">Pick a category</option></select><select id="flavor-${this.id}" name="Flavor-${this.id}" data-name="Flavor-${this.id}" required="" class="tm-select w-select"><option value="">Select flavor</option></select><select id="size-${this.id}" name="Size-${this.id}" data-name="Size-${this.id}" required="" class="tm-select w-select"><option value="">Select desired size</option></select><div class="tm-pastry_quantity"><input type="number" class="tm-quantity w-input" maxlength="256" name="Quantity-${this.id}" data-name="Quantity-${this.id}" min="1" placeholder="Select quantity" id="quantity-${this.id}" required=""><div class="tm-quantity_label">Piece(s)</div></div><textarea placeholder="Additional Notes" maxlength="5000" id="notes-${this.id}" name="Notes-${this.id}" data-name="Notes-${this.id}" class="tm-textarea w-input"></textarea><div class="w-embed"><input type="file" id="file-${this.id}" name="File-${this.id}" accept="image/*"></div></div></div></div>
+    <div id="pastry-${this.id}" class="tm-pastry" style="opacity: 0;"><div class="tm-pastry_head"><h2 class="tm-heading pastries">Tailor Pastry #<span class="tm-pastry_number">${this.index}</span></h2><div class="tm-delete w-embed"><svg viewBox="0 0 48 48" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M1.70697 47.707L24 25.414L46.293 47.707L47.707 46.293L25.414 24L47.707 1.70697L46.293 0.292969L24 22.586L1.70697 0.292969L0.292969 1.70697L22.586 24L0.292969 46.293L1.70697 47.707Z"></path></svg></div></div><div class="tm-pastry_inputs_wrap" style="height: 426px;"><div class="tm-pastry_inputs"><select id="category-${this.id}" name="Category-${this.id}" data-name="Category-${this.id}" required="" class="tm-select w-select"><option value="">Pick a category</option></select><select id="flavor-${this.id}" name="Flavor-${this.id}" data-name="Flavor-${this.id}" required="" class="tm-select w-select"><option value="">Select flavor</option></select><select id="size-${this.id}" name="Size-${this.id}" data-name="Size-${this.id}" required="" class="tm-select w-select"><option value="">Select desired size</option></select><div class="tm-pastry_quantity"><input type="number" class="tm-quantity w-input" maxlength="256" name="Quantity-${this.id}" data-name="Quantity-${this.id}" min="1" placeholder="Select quantity" id="quantity-${this.id}" required=""><div class="tm-quantity_label">Piece(s)</div></div><textarea placeholder="Additional Notes" maxlength="5000" id="notes-${this.id}" name="Notes-${this.id}" data-name="Notes-${this.id}" class="tm-textarea w-input"></textarea><div class="w-embed"><input type="file" id="file-${this.id}" name="File-${this.id}" accept="image/*"></div></div></div></div>
     `;
 
     // Append pastry to the container
@@ -189,7 +190,19 @@ export default class Pastry {
     elements.pastriesContainer.removeChild(this.pastryBlock);
   }
 
-  updatePastryNumber(newNumber) {
-    this.pastryNumber.textContent = newNumber;
+  updatePastryIndex(newIndex) {
+    this.index = newIndex;
+    this.pastryNumber.textContent = newIndex;
+  }
+
+  renderConfirm() {
+    if (!this.values.notes) this.values.notes = "-";
+    if (!this.values.file) this.values.file = "-";
+
+    const template = `
+    <div id="confirm-${this.id}" class="tm-confirm_pastries"><div><div class="tm-confirm_label">Pastry #${this.index}</div></div><div><div class="tm-confirm_text"><span class="tm-confirm_option">Category:</span> ${this.values.category}</div><div class="tm-confirm_text"><span class="tm-confirm_option">Flavor:</span> ${this.values.flavor}</div><div class="tm-confirm_text"><span class="tm-confirm_option">Size:</span> ${this.values.size}</div><div class="tm-confirm_text"><span class="tm-confirm_option">Quantity:</span> ${this.values.quantity} ${this.quantityLabel.textContent}</div><p class="tm-confirm_text"><span class="tm-confirm_option">Notes:</span> ${this.values.notes}</p><div class="tm-confirm_text"><span class="tm-confirm_option">Picture:</span> ${this.values.file}</div></div><div class="tm-edit">Edit</div></div>
+    `;
+
+    elements.confirmContainer.insertAdjacentHTML("beforeend", template);
   }
 }

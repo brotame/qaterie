@@ -29,10 +29,11 @@ export default class MultiStepForm {
   }
 
   setNextButtonText() {
-    if (this.currentStep === this.steps.length - 1)
+    if (this.currentStep === this.steps.length - 1) {
       this.next.textContent = this.submitText;
-    if (this.currentStep === this.steps.length - 2)
+    } else {
       this.next.textContent = this.nextText;
+    }
   }
 
   goNext() {
@@ -58,7 +59,10 @@ export default class MultiStepForm {
 
   hideButtons() {
     this.next.style.display = "none";
-    this.add.style.display = "none";
+  }
+
+  disableNav() {
+    this.formNav.forEach((nav) => (nav.style.pointerEvents = "none"));
   }
 
   addWarningClass(target) {
@@ -78,7 +82,7 @@ export default class MultiStepForm {
     if (this.alertElement) this.alertElement.classList.add("hidden");
   }
 
-  setConfirmValues(index) {
+  setConfirmValues() {
     const inputs = this.getInputs(this.currentStep);
 
     inputs.forEach((input) => {

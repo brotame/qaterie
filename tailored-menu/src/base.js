@@ -6,6 +6,8 @@ export const elements = {
   add: document.getElementById("tm-add"),
   alert: document.getElementById("tm-alert"),
   pastriesContainer: document.getElementById("pastries-container"),
+  confirmContainer: document.getElementById("confirm-container"),
+  confirmBlocksClass: ".tm-confirm_pastries",
   nextText: "Next",
   submitText: "Submit",
   warningClass: "warning",
@@ -28,8 +30,6 @@ export const getPastryOptions = () => {
 
     pastryOptions.push(data);
   });
-
-  console.log(pastryOptions);
 };
 
 export const msf = new MultiStepForm(elements);

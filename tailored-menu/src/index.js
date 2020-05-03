@@ -17,11 +17,9 @@ const msfController = {
 
     const setEventListeners = () => {
       msf.next.addEventListener("click", nextClick);
-      if (msf.formNav) {
-        msf.formNav.forEach((nav) => {
-          nav.addEventListener("click", navClick);
-        });
-      }
+      msf.formNav.forEach((nav) => {
+        nav.addEventListener("click", navClick);
+      });
     };
 
     const nextClick = () => {
@@ -37,6 +35,7 @@ const msfController = {
 
       if (msf.currentStep === msf.steps.length) {
         msf.submitForm();
+        msf.disableNav();
         msf.hideButtons();
       } else {
         msf.goNext();
@@ -141,12 +140,28 @@ const pastriesController = {
       getPastryOptions();
       addPastry();
       setEventListeners();
+      eraseConfirm();
     };
 
     const setEventListeners = () => {
       elements.pastriesContainer.addEventListener("click", pastryClick);
       elements.pastriesContainer.addEventListener("change", pastryInput);
       elements.add.addEventListener("click", addPastry);
+      elements.confirmContainer.addEventListener("click", confirmClick);
+
+      // Render confirm values when last step is reached
+      msf.next.addEventListener("click", () => {
+        eraseConfirm();
+        if (msf.currentStep === msf.steps.length - 1) confimPastries();
+      });
+
+      // Erase confirm values when nav is clicked
+      msf.formNav.forEach((nav) => {
+        nav.addEventListener("click", (e) => {
+          const step = e.currentTarget.dataset.msfNav - 1;
+          if (step < msf.currentStep) eraseConfirm();
+        });
+      });
     };
 
     const pastryClick = (e) => {
@@ -184,13 +199,11 @@ const pastriesController = {
       } else {
         pastry.disableInputs(inputName);
       }
-
-      console.log(pastry);
     };
 
     const addPastry = () => {
       // Create pastry
-      const newPastry = new Pastry(currentID);
+      const newPastry = new Pastry(currentID, pastries.length + 1);
 
       // Collapse all pastries
       pastries.forEach((pastry) => pastry.collapse());
@@ -225,7 +238,7 @@ const pastriesController = {
 
         // Update the pastry number in the title
         pastries.forEach((pastry, index) => {
-          pastry.updatePastryNumber(index + 1);
+          pastry.updatePastryIndex(index + 1);
         });
 
         // Expand previous pastry if the target was expanded.
@@ -241,13 +254,58 @@ const pastriesController = {
 
       // Delete the pastry from the array
       pastries.splice(targetIndex, 1);
-      console.log(pastries);
     };
 
     const togglePastry = (targetID) => {
       pastries.forEach((pastry) => {
         pastry.id === targetID ? pastry.expand() : pastry.collapse();
       });
+    };
+
+    const confimPastries = () => {
+      // Render each pastry values
+      pastries.forEach((pastry) => pastry.renderConfirm());
+      msf.setMaskHeight();
+    };
+
+    const confirmClick = (e) => {
+      const confirmBlock =
+        e.target.closest(".tm-confirm_details") ||
+        e.target.closest(".tm-confirm_pastries");
+      let pastryID;
+
+      // Get the ID of the pastry
+      if (confirmBlock) pastryID = confirmBlock.id.split("-")[1];
+
+      // Trigger corresponding methods
+      if (e.target.classList.contains("tm-edit")) editPastry(pastryID);
+    };
+
+    const editPastry = (targetID) => {
+      // If details "Edit" is clicked, go to step 1.
+      if (targetID === "details") {
+        msf.goNav(0);
+        return;
+      }
+
+      // If pastry "Edit" is clicked, go to step 2 and toggle the pastry.
+      msf.goNav(1);
+      togglePastry(parseInt(targetID));
+
+      // Delete all rendered confirm Blocks
+      eraseConfirm();
+    };
+
+    const eraseConfirm = () => {
+      const confirmBlocks = document.querySelectorAll(
+        elements.confirmBlocksClass
+      );
+
+      confirmBlocks.forEach((block) => block.remove());
+
+      /*while (confirmBlocks[0]) {
+        confirmBlocks[0].parentNode.removeChild(confirmBlocks[0]);
+      }*/
     };
 
     start();
