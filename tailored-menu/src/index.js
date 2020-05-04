@@ -182,23 +182,24 @@ const pastriesController = {
 
     const pastryInput = (e) => {
       let value = e.target.value;
-
       // Get input name and pastry ID and find the object in the store array
       const [inputName, pastryID] = e.target.id.split("-");
       const pastry = pastries.find((el) => el.id === parseInt(pastryID));
 
+      if (!value) {
+        pastry.disableInputs(inputName);
+        return;
+      }
+
       // Modify value when conditions are met
       if (inputName === "quantity" && value < 1) value = e.target.value = 1;
-      if (inputName === "file" && value) value = e.target.files[0].name;
+      if (inputName === "file") value = e.target.files[0].name;
 
       // Trigger corresponding methods
-      if (value) {
-        pastry.values[inputName] = value;
-        pastry.enableInputs(inputName);
-        pastry.getOptions(inputName);
-      } else {
-        pastry.disableInputs(inputName);
-      }
+      pastry.values[inputName] = value;
+      pastry.disableInputs(inputName);
+      pastry.enableInputs(inputName);
+      pastry.getOptions(inputName);
     };
 
     const addPastry = () => {
